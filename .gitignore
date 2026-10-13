@@ -9,3 +9,4 @@ keys/
 out/
 wwwroot/uploads/*
 !wwwroot/uploads/.gitkeep
+*.db.backup*

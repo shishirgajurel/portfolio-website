@@ -98,6 +98,34 @@
                     </a>
                 }
             </div>
+
+            @if (!string.IsNullOrEmpty(Model.GitHubUser))
+            {
+                <div class="repos-head">
+                    <h3>All my GitHub repositories</h3>
+                    <a href="https://github.com/@Model.GitHubUser?tab=repositories" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+                </div>
+                <p class="sub small">Updated automatically from GitHub, so new projects show up here as soon as I publish them.</p>
+                <div class="grid repos" id="gh-repos" data-user="@Model.GitHubUser"
+                     data-featured="@System.Text.Json.JsonSerializer.Serialize(Model.Featured)">
+                    @foreach (var r in Model.Repos)
+                    {
+                        Model.Featured.TryGetValue(IndexModel.NormalizeUrl(r.HtmlUrl), out var page);
+                        <a class="card repo" href="@(page ?? r.HtmlUrl)" target="@(page is null ? "_blank" : null)" rel="@(page is null ? "noopener noreferrer" : null)">
+                            <div class="repo-top">
+                                <h4>@r.Name</h4>
+                                @if (page is not null) { <span class="tag featured">Featured</span> }
+                                @if (r.Archived) { <span class="tag">Archived</span> }
+                            </div>
+                            <p>@(r.Description ?? "No description yet.")</p>
+                            <div class="repo-meta">
+                                @if (!string.IsNullOrEmpty(r.Language)) { <span><i class="lang"></i>@r.Language</span> }
+                                <span>Updated @r.PushedAt.ToString("MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
         </div>
     </section>
 

@@ -5,6 +5,7 @@ It's a small content-managed site: I edit my profile and projects in a private a
 
 ## Features
 - **Public site**: hero, about, skills, projects and contact, with light/dark mode
+- **GitHub repositories, always up to date**: the list is built into the page when it's exported (good for SEO) and refreshed live in the visitor's browser, so new repos appear without re-publishing. Set the account with `Site:GitHubUser`.
 - **Project pages** with their own SEO-friendly address (`/projects/<slug>`); details are written with simple `## Heading` and `- bullet` syntax
 - **Admin panel** at `/admin` (not linked from the site): edit profile photo, texts, links and availability; add, edit and delete projects with images
 - **Login** with cookie authentication, constant-time password comparison and **rate limiting** against password guessing

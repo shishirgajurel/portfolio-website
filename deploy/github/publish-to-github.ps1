@@ -15,6 +15,8 @@ param(
     [string] $BaseUrl = "https://www.shishirgajurel.com.np",
     [string] $RepoPath,
     [string[]] $Keep = @(),
+    # Publish even if GitHub couldn't be reached (the repo list would then only appear via the live update).
+    [switch] $AllowEmptyRepos,
     [switch] $Push,
     [int] $Port = 5123
 )
@@ -87,6 +89,12 @@ New-Item "$out\.nojekyll" -ItemType File -Force | Out-Null
 $leaks = Select-String -Path "$out\*.html", "$out\projects\*.html", "$out\*.xml", "$out\*.txt" `
     -Pattern "127\.0\.0\.1|localhost" -ErrorAction SilentlyContinue
 if ($leaks) { Write-Warning "Some files still mention localhost:"; $leaks | ForEach-Object { Write-Warning $_ } }
+
+$repoCards = (Select-String -Path "$out\index.html" -Pattern 'class="card repo"' -AllMatches).Matches.Count
+if ($repoCards -eq 0 -and -not $AllowEmptyRepos) {
+    throw "No GitHub repositories in the page (GitHub API unreachable or rate-limited?). Try again later, or add -AllowEmptyRepos."
+}
+Write-Host "GitHub repositories in the page: $repoCards"
 
 Write-Host "Static site ready in $out" -ForegroundColor Green
 

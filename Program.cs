@@ -19,6 +19,14 @@ if (builder.Configuration["SecretsFile"] is { Length: > 0 } secretsFile)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Default") ?? "Data Source=portfolio.db"));
 builder.Services.AddScoped<ImageStorage>();
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<GitHubRepos>(client =>
+{
+    client.BaseAddress = new Uri("https://api.github.com/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("portfolio-site");
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 // Keep the login-cookie keys on disk so the admin stays logged in after a restart.
 builder.Services.AddDataProtection()
@@ -96,6 +104,7 @@ app.Use(async (context, next) =>
     headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
     headers["Content-Security-Policy"] =
         "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; " +
+        "connect-src 'self' https://api.github.com; " +
         "base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
     // Keep the admin area out of search engines without advertising it in robots.txt.
