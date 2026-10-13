@@ -1,0 +1,65 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Admin — Profile";
+}
+<partial name="_AdminNav" />
+<main id="main">
+    <section class="section wrap narrow">
+        <h1 class="h1-small">Profile &amp; contact details</h1>
+        @if (Model.Saved is not null)
+        {
+            <p class="notice" role="status">@Model.Saved</p>
+        }
+        <form method="post" enctype="multipart/form-data" class="form card">
+            <div asp-validation-summary="ModelOnly" class="alert"></div>
+
+            <label>Profile photo</label>
+            @if (!string.IsNullOrEmpty(Model.Site.PhotoPath))
+            {
+                <img class="thumb" src="@Model.Site.PhotoPath" alt="Current profile photo" width="120" height="120">
+            }
+            <input asp-for="Photo" accept="image/jpeg,image/png,image/webp">
+            <span asp-validation-for="Photo" class="err"></span>
+            <label class="check"><input asp-for="RemovePhoto"> Remove current photo</label>
+
+            <label asp-for="Site.FullName">Full name</label>
+            <input asp-for="Site.FullName">
+            <span asp-validation-for="Site.FullName" class="err"></span>
+
+            <label asp-for="Site.Headline">Headline (big line on the homepage)</label>
+            <input asp-for="Site.Headline">
+            <span asp-validation-for="Site.Headline" class="err"></span>
+
+            <label asp-for="Site.Intro">Intro text</label>
+            <textarea asp-for="Site.Intro" rows="3"></textarea>
+            <span asp-validation-for="Site.Intro" class="err"></span>
+
+            <label asp-for="Site.About">About me</label>
+            <textarea asp-for="Site.About" rows="4"></textarea>
+
+            <label asp-for="Site.Skills">Skills (separate with commas)</label>
+            <input asp-for="Site.Skills">
+
+            <label asp-for="Site.Email">Email</label>
+            <input asp-for="Site.Email" type="email">
+            <span asp-validation-for="Site.Email" class="err"></span>
+
+            <label asp-for="Site.Address">Address / location</label>
+            <input asp-for="Site.Address">
+
+            <label asp-for="Site.Availability">Availability text</label>
+            <input asp-for="Site.Availability">
+
+            <label asp-for="Site.GitHubUrl">GitHub profile URL</label>
+            <input asp-for="Site.GitHubUrl" type="url" placeholder="https://github.com/your-name">
+            <span asp-validation-for="Site.GitHubUrl" class="err"></span>
+
+            <label asp-for="Site.LinkedInUrl">LinkedIn profile URL</label>
+            <input asp-for="Site.LinkedInUrl" type="url" placeholder="https://www.linkedin.com/in/your-name">
+            <span asp-validation-for="Site.LinkedInUrl" class="err"></span>
+
+            <div class="cta"><button class="btn primary" type="submit">Save changes</button></div>
+        </form>
+    </section>
+</main>

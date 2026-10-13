@@ -1,0 +1,22 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Admin login";
+}
+<main id="main">
+    <section class="section wrap narrow">
+        <h1 class="h1-small">Admin login</h1>
+        @if (Model.Error is not null)
+        {
+            <p class="alert" role="alert">@Model.Error</p>
+        }
+        <form method="post" class="form card">
+            <input type="hidden" asp-for="ReturnUrl">
+            <label for="Email">Email</label>
+            <input asp-for="Email" type="email" autocomplete="username" required>
+            <label for="Password">Password</label>
+            <input asp-for="Password" type="password" autocomplete="current-password" required>
+            <div class="cta"><button class="btn primary" type="submit">Sign in</button></div>
+        </form>
+    </section>
+</main>

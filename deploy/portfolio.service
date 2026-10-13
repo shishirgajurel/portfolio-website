@@ -1,0 +1,21 @@
+[Unit]
+Description=Shishir Gajurel portfolio site (ASP.NET Core)
+After=network.target
+
+[Service]
+User=portfolio
+WorkingDirectory=/opt/portfolio/app
+ExecStart=/opt/portfolio/app/PortfolioSite
+Restart=always
+RestartSec=5
+# Only reachable from this machine; Cloudflare Tunnel forwards public traffic to it.
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5000
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ConnectionStrings__Default=Data Source=/opt/portfolio/data/portfolio.db
+Environment=DataProtection__KeysPath=/opt/portfolio/data/keys
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+# Admin__Email and Admin__Password live here, readable only by root.
+EnvironmentFile=/etc/portfolio/secrets.env
+
+[Install]
+WantedBy=multi-user.target

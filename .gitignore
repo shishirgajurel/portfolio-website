@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+.idea/
+*.db
+*.db-shm
+*.db-wal
+keys/
+out/
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep

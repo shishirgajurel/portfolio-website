@@ -1,0 +1,36 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Admin — Projects";
+}
+<partial name="_AdminNav" />
+<main id="main">
+    <section class="section wrap narrow">
+        <h1 class="h1-small">Projects</h1>
+        <div class="cta"><a class="btn primary" asp-page="Edit">+ New project</a></div>
+
+        @foreach (var p in Model.Items)
+        {
+            <div class="row">
+                <div>
+                    <strong>@p.Title</strong>
+                    @if (!p.Published)
+                    {
+                        <span class="chip">Hidden</span>
+                    }
+                    <div class="muted">/projects/@p.Slug</div>
+                </div>
+                <div class="actions">
+                    <a class="btn small" asp-page="Edit" asp-route-id="@p.Id">Edit</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@p.Id" class="inline" data-confirm="Delete this project permanently?">
+                        <button class="btn small danger" type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        }
+        @if (!Model.Items.Any())
+        {
+            <p class="muted">No projects yet.</p>
+        }
+    </section>
+</main>

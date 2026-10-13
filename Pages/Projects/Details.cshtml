@@ -1,0 +1,54 @@
+@page "/projects/{slug}"
+@model DetailsModel
+@using System.Text.Json
+@inject IConfiguration Config
+@{
+    var p = Model.Project;
+    ViewData["Title"] = $"{p.Title} — Shishir Gajurel";
+    ViewData["Description"] = p.Summary;
+    if (!string.IsNullOrEmpty(p.ImagePath)) ViewData["Image"] = p.ImagePath;
+
+    var baseUrl = SiteUrl.BaseUrl(Request, Config);
+    var jsonLd = JsonSerializer.Serialize(new Dictionary<string, object?>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "CreativeWork",
+        ["name"] = p.Title,
+        ["description"] = p.Summary,
+        ["url"] = $"{baseUrl}/projects/{p.Slug}",
+        ["dateModified"] = p.Updated.ToString("yyyy-MM-dd"),
+        ["image"] = string.IsNullOrEmpty(p.ImagePath) ? null : baseUrl + p.ImagePath
+    });
+}
+@section Head {
+    <script type="application/ld+json">@Html.Raw(jsonLd)</script>
+}
+
+<main id="main">
+    <article class="section wrap article">
+        <nav aria-label="Breadcrumb" class="crumbs"><a href="/">Home</a> / <a href="/#projects">Projects</a> / <span>@p.Title</span></nav>
+        <h1 class="h1-small">@p.Title</h1>
+        <p class="lead">@p.Summary</p>
+        <div class="chips">
+            @foreach (var tag in p.TagList)
+            {
+                <span class="chip">@tag</span>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(p.ImagePath))
+        {
+            <img class="ph hero-img" src="@p.ImagePath" alt="@p.Title preview" width="1200" height="675" fetchpriority="high">
+        }
+
+        <div class="prose">@Html.Raw(ContentRenderer.ToHtml(p.Details))</div>
+
+        <div class="cta">
+            @if (!string.IsNullOrEmpty(p.Link))
+            {
+                <a class="btn primary" href="@p.Link" target="_blank" rel="noopener noreferrer">View source ↗</a>
+            }
+            <a class="btn" href="/#projects">← All projects</a>
+        </div>
+    </article>
+</main>

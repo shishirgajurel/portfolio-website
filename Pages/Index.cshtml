@@ -1,0 +1,130 @@
+@page
+@model IndexModel
+@using System.Text.Json
+@{
+    var s = Model.Site;
+    var nameParts = s.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var first = nameParts.FirstOrDefault() ?? s.FullName;
+    var initials = string.Concat(nameParts.Take(2).Select(w => char.ToUpperInvariant(w[0])));
+
+    ViewData["Title"] = $"{s.FullName} — Software Engineering Student | Java, C#/.NET";
+    ViewData["Description"] = s.Intro;
+
+    var jsonLd = JsonSerializer.Serialize(new Dictionary<string, object?>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "Person",
+        ["name"] = s.FullName,
+        ["jobTitle"] = "Software Engineering Student",
+        ["email"] = s.Email,
+        ["address"] = s.Address,
+        ["sameAs"] = new[] { s.GitHubUrl, s.LinkedInUrl }.Where(u => !string.IsNullOrEmpty(u)).ToArray()
+    });
+}
+@section Head {
+    <script type="application/ld+json">@Html.Raw(jsonLd)</script>
+}
+
+<main id="main">
+    <section class="hero" id="top">
+        <div class="wrap">
+            @if (!string.IsNullOrEmpty(s.PhotoPath))
+            {
+                <img class="avatar" src="@s.PhotoPath" alt="Portrait of @s.FullName" width="200" height="200" fetchpriority="high">
+            }
+            else
+            {
+                <div class="avatar avatar-ph" aria-hidden="true">@initials</div>
+            }
+            <span class="badge"><i class="dot"></i> Open to student jobs &amp; internships</span>
+            <h1>Hi, I'm @(first).<br><em>@s.Headline</em></h1>
+            <p class="lead">@s.Intro</p>
+            <div class="cta">
+                <a class="btn primary" href="#contact">Get in touch</a>
+                <a class="btn" href="#projects">See my projects</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="wrap reveal">
+            <h2>About me</h2>
+            <p class="sub">Student developer, based in @(s.Address ?? "Denmark").</p>
+            <div class="grid">
+                @if (!string.IsNullOrWhiteSpace(s.About))
+                {
+                    <div class="card"><h3>About</h3><p>@s.About</p></div>
+                }
+                <div class="card">
+                    <h3>Skills &amp; tools</h3>
+                    <div class="chips">
+                        @foreach (var skill in s.SkillList)
+                        {
+                            <span class="chip">@skill</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="wrap reveal">
+            <h2>Projects</h2>
+            <p class="sub">Click a project to read how it works.</p>
+            <div class="grid">
+                @foreach (var p in Model.Projects)
+                {
+                    <a class="card pcard" asp-page="/Projects/Details" asp-route-slug="@p.Slug">
+                        @if (!string.IsNullOrEmpty(p.ImagePath))
+                        {
+                            <img class="ph" src="@p.ImagePath" alt="" width="640" height="360" loading="lazy">
+                        }
+                        else
+                        {
+                            <div class="ph"></div>
+                        }
+                        <div class="pb">
+                            <h3>@p.Title</h3>
+                            <p>@p.Summary</p>
+                            <div class="chips">
+                                @foreach (var tag in p.TagList)
+                                {
+                                    <span class="chip">@tag</span>
+                                }
+                            </div>
+                            <span class="more">Read the full story →</span>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="wrap reveal">
+            <div class="card">
+                <h2>Let's work together</h2>
+                @if (!string.IsNullOrWhiteSpace(s.Availability))
+                {
+                    <p class="sub">@s.Availability</p>
+                }
+                <div class="cta center">
+                    <a class="btn primary" href="mailto:@s.Email">@s.Email</a>
+                    @if (!string.IsNullOrEmpty(s.GitHubUrl))
+                    {
+                        <a class="btn" href="@s.GitHubUrl" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                    }
+                    @if (!string.IsNullOrEmpty(s.LinkedInUrl))
+                    {
+                        <a class="btn" href="@s.LinkedInUrl" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                    }
+                </div>
+                @if (!string.IsNullOrWhiteSpace(s.Address))
+                {
+                    <p class="sub top-gap">📍 @s.Address</p>
+                }
+            </div>
+        </div>
+    </section>
+</main>

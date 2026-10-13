@@ -1,0 +1,50 @@
+@page "{id:int?}"
+@model EditModel
+@{
+    ViewData["Title"] = "Admin — Edit project";
+}
+<partial name="_AdminNav" />
+<main id="main">
+    <section class="section wrap narrow">
+        <h1 class="h1-small">@(Request.RouteValues.ContainsKey("id") ? "Edit project" : "New project")</h1>
+        <form method="post" enctype="multipart/form-data" class="form card">
+            <label asp-for="Item.Title">Title</label>
+            <input asp-for="Item.Title">
+            <span asp-validation-for="Item.Title" class="err"></span>
+
+            <label asp-for="Item.Summary">Short summary (shown on the card)</label>
+            <textarea asp-for="Item.Summary" rows="2"></textarea>
+            <span asp-validation-for="Item.Summary" class="err"></span>
+
+            <label asp-for="Item.Tags">Tags (separate with commas)</label>
+            <input asp-for="Item.Tags" placeholder="C#, Java, MySQL">
+
+            <label asp-for="Item.Link">Link (GitHub or live site)</label>
+            <input asp-for="Item.Link" type="url" placeholder="https://github.com/...">
+            <span asp-validation-for="Item.Link" class="err"></span>
+
+            <label>Project image</label>
+            @if (!string.IsNullOrEmpty(Model.Item.ImagePath))
+            {
+                <img class="thumb wide" src="@Model.Item.ImagePath" alt="Current project image" width="240" height="135">
+            }
+            <input asp-for="Image" accept="image/jpeg,image/png,image/webp">
+            <span asp-validation-for="Image" class="err"></span>
+            <label class="check"><input asp-for="RemoveImage"> Remove current image</label>
+
+            <label asp-for="Item.Details">Full explanation — use "## Heading" for sections and "- " for bullet points</label>
+            <textarea asp-for="Item.Details" rows="14"></textarea>
+            <span asp-validation-for="Item.Details" class="err"></span>
+
+            <label asp-for="Item.SortOrder">Order (lower numbers appear first)</label>
+            <input asp-for="Item.SortOrder" type="number">
+
+            <label class="check"><input asp-for="Item.Published"> Visible on the website</label>
+
+            <div class="cta">
+                <button class="btn primary" type="submit">Save project</button>
+                <a class="btn" asp-page="Index">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
